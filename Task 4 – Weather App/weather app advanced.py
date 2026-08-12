@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
 import requests
 import os
 from PIL import Image, ImageTk
@@ -15,32 +14,29 @@ FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
 
 class WeatherApp:
 
-    def __init__(self, window):
+    def __init__(self, root):
 
-        self.window = window
+        self.window = root
         self.window.title("Weather App")
         self.window.geometry("850x700")
         self.window.resizable(False, False)
 
         self.unit = "metric"
         self.current_data = None
+        self.weather_icon = None
 
-        # =========================
-        # TITLE
-        # =========================
+
 
         title = tk.Label(
-            window,
+            root,
             text="Weather App",
             font=("Arial", 28, "bold")
         )
         title.pack(pady=15)
 
-        # =========================
-        # INPUT AREA
-        # =========================
 
-        input_frame = tk.Frame(window)
+
+        input_frame = tk.Frame(root)
         input_frame.pack(pady=10)
 
         tk.Label(
@@ -64,34 +60,28 @@ class WeatherApp:
         )
         self.get_button.grid(row=0, column=2, padx=5)
 
-        # =========================
-        # UNIT TOGGLE
-        # =========================
+
 
         self.unit_button = tk.Button(
-            window,
+            root,
             text="Switch to Fahrenheit",
             command=self.toggle_unit
         )
         self.unit_button.pack(pady=5)
 
-        # =========================
-        # STATUS
-        # =========================
+
 
         self.status_label = tk.Label(
-            window,
+            root,
             text="Enter a city to get weather information.",
             font=("Arial", 11)
         )
         self.status_label.pack(pady=5)
 
-        # =========================
-        # CURRENT WEATHER
-        # =========================
+
 
         self.current_frame = tk.LabelFrame(
-            window,
+            root,
             text="Current Weather",
             font=("Arial", 14, "bold"),
             padx=15,
@@ -114,12 +104,10 @@ class WeatherApp:
         )
         self.weather_text.pack(side="left", padx=20)
 
-        # =========================
-        # HOURLY FORECAST
-        # =========================
+
 
         self.hourly_frame = tk.LabelFrame(
-            window,
+            root,
             text="Next 6 Hours",
             font=("Arial", 14, "bold"),
             padx=10,
@@ -139,12 +127,10 @@ class WeatherApp:
         )
         self.hourly_text.pack()
 
-        # =========================
-        # DAILY FORECAST
-        # =========================
+
 
         self.daily_frame = tk.LabelFrame(
-            window,
+            root,
             text="Next 5 Days",
             font=("Arial", 14, "bold"),
             padx=10,
@@ -164,9 +150,6 @@ class WeatherApp:
         )
         self.daily_text.pack()
 
-    # =====================================================
-    # GET WEATHER
-    # =====================================================
 
     def get_weather(self):
 
@@ -191,9 +174,6 @@ class WeatherApp:
 
         try:
 
-            # =========================
-            # CURRENT WEATHER API
-            # =========================
 
             current_params = {
                 "q": city,
@@ -227,10 +207,6 @@ class WeatherApp:
             self.current_data = data
 
             self.display_current_weather(data)
-
-            # =========================
-            # FORECAST API
-            # =========================
 
             forecast_params = {
                 "q": city,
@@ -277,15 +253,12 @@ class WeatherApp:
                 "Error: No Internet connection."
             )
 
-        except Exception as e:
+        except (requests.exceptions.RequestException, KeyError, TypeError, ValueError) as e:
 
             self.show_error(
                 "Unexpected Error: " + str(e)
             )
 
-    # =====================================================
-    # CURRENT WEATHER
-    # =====================================================
 
     def display_current_weather(self, data):
 
@@ -300,7 +273,6 @@ class WeatherApp:
 
         icon_code = data["weather"][0]["icon"]
 
-        # Download weather icon
         try:
 
             icon_url = (
@@ -325,7 +297,7 @@ class WeatherApp:
                 image=self.weather_icon
             )
 
-        except Exception:
+        except (requests.exceptions.RequestException, OSError, ValueError):
 
             self.icon_label.config(
                 image=""
@@ -345,10 +317,6 @@ class WeatherApp:
             f"Wind Speed: {wind_speed:.2f} "
             f"{'m/s' if self.unit == 'metric' else 'mph'}"
         )
-
-    # =====================================================
-    # HOURLY FORECAST
-    # =====================================================
 
     def display_hourly_forecast(self, data):
 
@@ -386,15 +354,6 @@ class WeatherApp:
                 f"{temperature:.1f}{unit_symbol} | "
                 f"{condition.title()}\n"
             )
-
-        # OpenWeatherMap free forecast API gives
-        # 3-hour forecast intervals.
-        # The first two entries represent approximately
-        # the next 6 hours.
-
-    # =====================================================
-    # DAILY FORECAST
-    # =====================================================
 
     def display_daily_forecast(self, data):
 
@@ -452,10 +411,6 @@ class WeatherApp:
 
             count += 1
 
-    # =====================================================
-    # TOGGLE CELSIUS / FAHRENHEIT
-    # =====================================================
-
     def toggle_unit(self):
 
         if self.unit == "metric":
@@ -478,10 +433,6 @@ class WeatherApp:
         if self.city_entry.get().strip() != "":
             self.get_weather()
 
-    # =====================================================
-    # ERROR MESSAGE
-    # =====================================================
-
     def show_error(self, message):
 
         self.status_label.config(
@@ -489,13 +440,8 @@ class WeatherApp:
             fg="red"
         )
 
+app_window = tk.Tk()
 
-# =========================================================
-# START APPLICATION
-# =========================================================
+app = WeatherApp(app_window)
 
-window = tk.Tk()
-
-app = WeatherApp(window)
-
-window.mainloop()
+app_window.mainloop()
