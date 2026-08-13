@@ -53,7 +53,6 @@ BMI = Weight / (Height × Height)
 Task-2_BMI_Calculator/
 │── bmi_calculator.py          # Console version
 │── bmi_calculator_gui.py      # GUI version
-│── bmi_records.csv            # Stores BMI records
 │── README.md
 ```
 
