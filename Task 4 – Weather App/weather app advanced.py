@@ -155,12 +155,11 @@ class WeatherApp:
 
         city = self.city_entry.get().strip()
 
-        # Empty input validation
+      
         if city == "":
             self.show_error("Error: City name cannot be empty.")
             return
 
-        # API key validation
         if not API_KEY:
             self.show_error(
                 "Error: OPENWEATHER_API_KEY is not configured."
@@ -325,7 +324,7 @@ class WeatherApp:
             tk.END
         )
 
-        forecasts = data["list"][:2]
+        forecasts = data["list"][:6]
 
         for forecast in forecasts:
 
@@ -429,7 +428,6 @@ class WeatherApp:
                 text="Switch to Fahrenheit"
             )
 
-        # Refresh weather if a city is already loaded
         if self.city_entry.get().strip() != "":
             self.get_weather()
 
