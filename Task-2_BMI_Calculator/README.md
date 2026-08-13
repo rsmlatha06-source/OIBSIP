@@ -24,7 +24,7 @@ This is a Python GUI-based BMI (Body Mass Index) Calculator developed using Tkin
   - 🔴 Red = Obese
 - Saves BMI records to a CSV file
 - Displays BMI history
-- Shows BMI trend graph using Matplotlib
+- Shows a BMI comparison graph using Matplotlib.
 - Handles invalid input using exception handling
 - Prevents zero and negative values
 
